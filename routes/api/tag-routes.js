@@ -47,8 +47,22 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     // update a tag's name by its `id` value
+    try {
+        const userTag = await Tag.update(req.body, {
+            where: {
+                id: req.params.id,
+            },
+        });
+        if (!userTag[0]) {
+            res.status(404).json({ message: 'No tag with this id!' });
+            return;
+        }
+        res.status(200).json(userTag);
+    } catch (err) {
+        res.status(500).json(err);
+    }
 });
 
 router.delete('/:id', async (req, res) => {
